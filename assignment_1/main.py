@@ -28,10 +28,10 @@ class Tsetlin:
     def determinePenalty(self, P):
         if random.random() <= P:
             self.reward()
-            return
+            return 1
         else:
             self.penalize()
-            return
+            return 2
 
     # Function to penalize itself
     def penalize(self):
@@ -57,6 +57,16 @@ class Tsetlin:
 # Creating 2 lists for storing data and plotting
 ChartList = [0, 0, 0, 0, 0, 0]
 AutoMataList = [0, 1, 2, 3, 4, 5]
+
+PenaltiesList1 = [0, 0, 0]
+PenaltiesList2 = [0, 0, 0]
+PenaltiesList3 = [0, 0, 0]
+PenaltiesList4 = [0, 0, 0]
+PenaltiesList5 = [0, 0, 0]
+AutomataPenaltieList = [PenaltiesList1, PenaltiesList2, PenaltiesList3, PenaltiesList4, PenaltiesList5]
+
+PenaltiesListX = [0, 1, 2]
+
 
 
 TsetlinAutomata1List = [0, 0, 0, 0, 0, 0, 0]
@@ -89,34 +99,30 @@ for i in range(10000):
 
     # Invokes the DetermineProbability function that calculates a probability based on its parameter M
     # Then using determinePenalty function to determines the penalty (penalize/reward) for each automata separately using the calculated probability.
-    for tsetlin in TsetlinAutomataList:
-        tsetlin.determinePenalty(DetermineProbability(M))
+    for i, tsetlin in enumerate(TsetlinAutomataList):
+        AutomataPenaltieList[TsetlinAutomataList.index(tsetlin)][tsetlin.determinePenalty(DetermineProbability(M))] += 1
 
     ChartList[M] += 1
 
     # Prints the states of each automata
     for i, tsetlin in enumerate(TsetlinAutomataList):
-        print(i)
         AutoMataListList[i][tsetlin.state] += 1
-        #print("#State: ", tsetlin.state)
+        print("#State: ", tsetlin.state)
 
     # Prints the current iteration and the amount of YES for the iteration
     print("Simulation: ", i, "#Yes: ", M)
 
-#Creates a bar plot based on 2 parameters: AutoMataList and ChartList
+# Creates a bar plot based on 2 parameters: AutoMataList and ChartList for amount of YES
 plt.bar(AutoMataList, ChartList)
-
-#Implemented titles for the plot
 plt.title('Bar Chart')
 plt.xlabel('Counted Yes')
 plt.ylabel('Amount of Counted Yes')
-
-# Shows the plot
 plt.show()
 
 # Prints the cumulative amount of counted Yes for each counted YES
 print(ChartList)
 
+# Print graph of the states for different automatas
 StatesList = [0, 1, 2, 3, 4, 5, 6]
 for Tsetlin in AutoMataListList:
     plt.bar(StatesList, Tsetlin)
@@ -127,4 +133,15 @@ for Tsetlin in AutoMataListList:
     plt.ylabel('Counted times')
     AutoMataListList.index(Tsetlin)
     plt.show()
+
+# Plot a graph of counted rewards and penalize for each automata
+for tsetlin in AutomataPenaltieList:
+    plt.bar(PenaltiesListX, tsetlin)
+
+    # Implemented titles for the plot
+    plt.title(f"{AutomataPenaltieList.index(tsetlin) + 1} Automata: Rewards (1) VS Penalties (2)")
+    plt.xlabel('')
+    plt.ylabel('Counted times')
+    plt.show()
+    print(tsetlin)
 
