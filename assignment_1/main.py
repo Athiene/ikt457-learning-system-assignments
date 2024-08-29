@@ -1,4 +1,6 @@
 import random
+from sre_parse import State
+
 import matplotlib.pyplot as plt
 
 # Function to determine the probability for penalize or reward based on counted yes
@@ -56,6 +58,13 @@ class Tsetlin:
 ChartList = [0, 0, 0, 0, 0, 0]
 AutoMataList = [0, 1, 2, 3, 4, 5]
 
+
+TsetlinAutomata1List = [0, 0, 0, 0, 0, 0, 0]
+TsetlinAutomata2List = [0, 0, 0, 0, 0, 0, 0]
+TsetlinAutomata3List = [0, 0, 0, 0, 0, 0, 0]
+TsetlinAutomata4List = [0, 0, 0, 0, 0, 0, 0]
+TsetlinAutomata5List = [0, 0, 0, 0, 0, 0, 0]
+
 # Creating the TsetlinAutomatas with 3 states
 TsetlinAutomata1 = Tsetlin(3)
 TsetlinAutomata2 = Tsetlin(3)
@@ -65,6 +74,7 @@ TsetlinAutomata5 = Tsetlin(3)
 
 # Storing the created TsetlinAutomatas in a list
 TsetlinAutomataList = [TsetlinAutomata1, TsetlinAutomata2, TsetlinAutomata3, TsetlinAutomata4, TsetlinAutomata5]
+AutoMataListList = [TsetlinAutomata1List, TsetlinAutomata2List, TsetlinAutomata3List, TsetlinAutomata4List, TsetlinAutomata5List]
 
 # MAIN LOOP
 for i in range(10000):
@@ -85,8 +95,10 @@ for i in range(10000):
     ChartList[M] += 1
 
     # Prints the states of each automata
-    for tsetlin in TsetlinAutomataList:
-        print("#State: ", tsetlin.state)
+    for i, tsetlin in enumerate(TsetlinAutomataList):
+        print(i)
+        AutoMataListList[i][tsetlin.state] += 1
+        #print("#State: ", tsetlin.state)
 
     # Prints the current iteration and the amount of YES for the iteration
     print("Simulation: ", i, "#Yes: ", M)
@@ -104,4 +116,15 @@ plt.show()
 
 # Prints the cumulative amount of counted Yes for each counted YES
 print(ChartList)
+
+StatesList = [0, 1, 2, 3, 4, 5, 6]
+for Tsetlin in AutoMataListList:
+    plt.bar(StatesList, Tsetlin)
+
+    # Implemented titles for the plot
+    plt.title(f"{AutoMataListList.index(Tsetlin) + 1} Tsetlin Automata")
+    plt.xlabel('States')
+    plt.ylabel('Counted times')
+    AutoMataListList.index(Tsetlin)
+    plt.show()
 
