@@ -1,18 +1,22 @@
 import random
+import matplotlib.pyplot as plt
 
 def DetermineProbability(M):
     if M <= 3:
         return M*0.2
     if M > 3:
         return 0.6 - (M-3)*0.2
+    #if M == 4:
+    #    return 0.8
+    #if M == 5:
+    #    return 0.8
+
 
 
 class Tsetlin:
     def __init__(self, n):
-        # n is the number of states per action
         self.n = n
 
-        # Initial state selected randomly
         self.state = random.choice([self.n, self.n + 1])
         #self.state = 6
 
@@ -43,14 +47,13 @@ class Tsetlin:
             return 2
 
 ChartList = [0, 0, 0, 0, 0, 0]
-AutoMataList = [1, 2, 3, 4, 5]
+AutoMataList = [0, 1, 2, 3, 4, 5]
 
 TsetlinAutomata1 = Tsetlin(3)
 TsetlinAutomata2 = Tsetlin(3)
 TsetlinAutomata3 = Tsetlin(3)
 TsetlinAutomata4 = Tsetlin(3)
 TsetlinAutomata5 = Tsetlin(3)
-
 
 for i in range(10000):
     TsetlinAutomataList = [TsetlinAutomata1, TsetlinAutomata2, TsetlinAutomata3, TsetlinAutomata4, TsetlinAutomata5]
@@ -71,6 +74,12 @@ for i in range(10000):
 
     print("Simulation: ", i, "#Yes: ", M)
 
+plt.bar(AutoMataList, ChartList)
 
+plt.title('Bar Chart')
+plt.xlabel('Counted Yes')
+plt.ylabel('Amount of Counted Yes')
+
+plt.show()
 print(ChartList)
 
