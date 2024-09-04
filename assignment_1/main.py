@@ -1,7 +1,10 @@
 import random
-from sre_parse import State
+import matplotlib.pyplot as plt
+import numpy as np
 
 import matplotlib.pyplot as plt
+from numpy.ma.extras import average
+
 
 # Function to determine the probability for penalize or reward based on counted yes
 def DetermineProbability(M):
@@ -67,8 +70,6 @@ AutomataPenaltieList = [PenaltiesList1, PenaltiesList2, PenaltiesList3, Penaltie
 
 PenaltiesListX = [0, 1, 2]
 
-
-
 TsetlinAutomata1List = [0, 0, 0, 0, 0, 0, 0]
 TsetlinAutomata2List = [0, 0, 0, 0, 0, 0, 0]
 TsetlinAutomata3List = [0, 0, 0, 0, 0, 0, 0]
@@ -86,8 +87,15 @@ TsetlinAutomata5 = Tsetlin(3)
 TsetlinAutomataList = [TsetlinAutomata1, TsetlinAutomata2, TsetlinAutomata3, TsetlinAutomata4, TsetlinAutomata5]
 AutoMataListList = [TsetlinAutomata1List, TsetlinAutomata2List, TsetlinAutomata3List, TsetlinAutomata4List, TsetlinAutomata5List]
 
+# List to store M values
+M_values = []
+average_M_values = []
+cumulative_M = 0
+
+Iterations = 1000
+
 # MAIN LOOP
-for i in range(10000):
+for i in range(Iterations):
     M = 0
 
     # Invoking the makeDecision function for each stored automata in TsetlinAutomataList
@@ -99,18 +107,35 @@ for i in range(10000):
 
     # Invokes the DetermineProbability function that calculates a probability based on its parameter M
     # Then using determinePenalty function to determines the penalty (penalize/reward) for each automata separately using the calculated probability.
-    for i, tsetlin in enumerate(TsetlinAutomataList):
+    for k, tsetlin in enumerate(TsetlinAutomataList):
         AutomataPenaltieList[TsetlinAutomataList.index(tsetlin)][tsetlin.determinePenalty(DetermineProbability(M))] += 1
 
     ChartList[M] += 1
 
+    # Store the current M value
+    M_values.append(M)
+
     # Prints the states of each automata
-    for i, tsetlin in enumerate(TsetlinAutomataList):
-        AutoMataListList[i][tsetlin.state] += 1
+    for j, tsetlin in enumerate(TsetlinAutomataList):
+        AutoMataListList[j][tsetlin.state] += 1
         print("#State: ", tsetlin.state)
 
     # Prints the current iteration and the amount of YES for the iteration
     print("Simulation: ", i, "#Yes: ", M)
+
+    # Calcualte average
+    cumulative_M += M
+    temp = cumulative_M / (i+1)
+    average_M_values.append(temp)
+
+# Plot M values over iterations
+plt.plot(range(Iterations), M_values, color='b', label='M')
+plt.plot(range(Iterations), average_M_values, color='r', label='Average')
+plt.title('M Values over Iterations')
+plt.xlabel('Iteration')
+plt.ylabel('M')
+plt.legend()
+plt.show()
 
 # Creates a bar plot based on 2 parameters: AutoMataList and ChartList for amount of YES
 plt.bar(AutoMataList, ChartList)
