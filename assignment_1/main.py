@@ -166,8 +166,6 @@ for Tsetlin in AutoMataListList:
 # Plot a graph of counted rewards and penalize for each automata
 for tsetlin in AutomataPenaltieList:
     plt.bar(PenaltiesListX, tsetlin)
-
-    # Implemented titles for the plot
     plt.title(f"{AutomataPenaltieList.index(tsetlin) + 1} Automata: Rewards (1) VS Penalties (2)")
     plt.xlabel('')
     plt.ylabel('Counted times')
