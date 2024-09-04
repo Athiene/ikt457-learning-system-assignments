@@ -15,7 +15,7 @@ def DetermineProbability(M):
     #if M == 4:
     #    return 0.8
     #if M == 5:
-    #    return 0.8
+    #    return 0.4
 
 
 # Class that represents a Tsetlin automata
@@ -25,7 +25,7 @@ class Tsetlin:
         self.n = n
 
         self.state = random.choice([self.n, self.n + 1])
-        #self.state = 6
+        self.state = 6
 
     # Function to determine if the automata gets penelized or rewarded based on probability calculated
     def determinePenalty(self, P):
@@ -123,12 +123,12 @@ for i in range(Iterations):
     # Prints the current iteration and the amount of YES for the iteration
     print("Simulation: ", i, "#Yes: ", M)
 
-    # Calcualte average
+    # Calculate average
     cumulative_M += M
     temp = cumulative_M / (i+1)
     average_M_values.append(temp)
 
-# Plot M values over iterations
+# Plot M values over iterations + Cumulative average
 plt.plot(range(Iterations), M_values, color='b', label='M')
 plt.plot(range(Iterations), average_M_values, color='r', label='Average')
 plt.title('M Values over Iterations')
