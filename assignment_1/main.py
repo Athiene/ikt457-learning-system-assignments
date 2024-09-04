@@ -1,9 +1,9 @@
 import random
 import matplotlib.pyplot as plt
-import numpy as np
 
-import matplotlib.pyplot as plt
-from numpy.ma.extras import average
+Iterations = 1000
+num_states = 20
+
 
 
 # Function to determine the probability for penalize or reward based on counted yes
@@ -12,6 +12,8 @@ def DetermineProbability(M):
         return M*0.2
     if M > 3:
         return 0.6 - (M-3)*0.2
+    #if M == 1:
+        #return 0.8
     #if M == 4:
     #    return 0.8
     #if M == 5:
@@ -25,7 +27,7 @@ class Tsetlin:
         self.n = n
 
         self.state = random.choice([self.n, self.n + 1])
-        self.state = 6
+        #self.state = 6
 
     # Function to determine if the automata gets penelized or rewarded based on probability calculated
     def determinePenalty(self, P):
@@ -70,18 +72,21 @@ AutomataPenaltieList = [PenaltiesList1, PenaltiesList2, PenaltiesList3, Penaltie
 
 PenaltiesListX = [0, 1, 2]
 
-TsetlinAutomata1List = [0, 0, 0, 0, 0, 0, 0]
-TsetlinAutomata2List = [0, 0, 0, 0, 0, 0, 0]
-TsetlinAutomata3List = [0, 0, 0, 0, 0, 0, 0]
-TsetlinAutomata4List = [0, 0, 0, 0, 0, 0, 0]
-TsetlinAutomata5List = [0, 0, 0, 0, 0, 0, 0]
+num_states1 = (num_states*2)+1
+
+TsetlinAutomata1List = [0] * num_states1
+TsetlinAutomata2List = [0] * num_states1
+TsetlinAutomata3List = [0] * num_states1
+TsetlinAutomata4List = [0] * num_states1
+TsetlinAutomata5List = [0] * num_states1
+
 
 # Creating the TsetlinAutomatas with 3 states
-TsetlinAutomata1 = Tsetlin(3)
-TsetlinAutomata2 = Tsetlin(3)
-TsetlinAutomata3 = Tsetlin(3)
-TsetlinAutomata4 = Tsetlin(3)
-TsetlinAutomata5 = Tsetlin(3)
+TsetlinAutomata1 = Tsetlin(num_states)
+TsetlinAutomata2 = Tsetlin(num_states)
+TsetlinAutomata3 = Tsetlin(num_states)
+TsetlinAutomata4 = Tsetlin(num_states)
+TsetlinAutomata5 = Tsetlin(num_states)
 
 # Storing the created TsetlinAutomatas in a list
 TsetlinAutomataList = [TsetlinAutomata1, TsetlinAutomata2, TsetlinAutomata3, TsetlinAutomata4, TsetlinAutomata5]
@@ -92,7 +97,6 @@ M_values = []
 average_M_values = []
 cumulative_M = 0
 
-Iterations = 1000
 
 # MAIN LOOP
 for i in range(Iterations):
@@ -148,7 +152,7 @@ plt.show()
 print(ChartList)
 
 # Print graph of the states for different automatas
-StatesList = [0, 1, 2, 3, 4, 5, 6]
+StatesList = list(range(num_states1))
 for Tsetlin in AutoMataListList:
     plt.bar(StatesList, Tsetlin)
 
