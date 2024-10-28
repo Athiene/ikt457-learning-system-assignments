@@ -3,97 +3,88 @@ import numpy as np
 from dash import Dash, html, dcc, callback, Output, Input
 import pandas as pd
 import plotly.express as px
-
-# Incorporate data
-df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminder2007.csv')
+import plotly.graph_objects as go
 
 # Initialize the app
 app = Dash()
 
-SF_x = [1, 2, 3]
-SF_y = [1, 2, 3]
+# Sample x-axis values for the bar chart
+SF_x = [1, 2, 3, 4, 5, 6, 7, 8]
+
+# Initial y-axis values (all zero to start)
+SF_y = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+def caluclate_notLY(value):
+    return 1.0-value
+
+def calculate_notY(value):
+    return 1.0-value
 
 # App layout
 app.layout = html.Div(
     [
-        # Graph
-        dcc.Graph(
-            figure={
-                'data': [
-                    {'x': SF_x, 'y': SF_y, 'type': 'bar', 'name': 'SF'},
-                    {'x': SF_x, 'y': SF_y, 'type': 'bar', 'name': 'Montreal'},
-                ],
-                'layout': {
-                    'title': 'Interactive Stationary Distribution Bar Chart'
-                }
-            }
-        ),
+        # Graph to display bar chart
+        dcc.Graph(id='bar-chart'),
 
         # Slider for s
         dcc.Markdown('''#### Slider: s'''),
         dcc.Slider(1, 25, 0.1, value=12, id="s-slider", marks=None,
                    tooltip={"placement": "bottom", "always_visible": True}),
-        html.Div(id='s-output', style={'marginTop': 20}),
 
         # Slider for P(L|Y)
         dcc.Markdown('''#### Slider: P(L|Y)'''),
         dcc.Slider(0, 1, 0.01, value=0.5, id="P(L|Y)-slider", marks=None,
                    tooltip={"placement": "bottom", "always_visible": True}),
-        html.Div(id='P(L|Y)-output', style={'marginTop': 20}),
 
         # Slider for P(Y)
         dcc.Markdown('''#### Slider: P(Y)'''),
         dcc.Slider(0, 1, 0.01, value=0.5, id="P(Y)-slider", marks=None,
                    tooltip={"placement": "bottom", "always_visible": True}),
-        html.Div(id='P(Y)-output', style={'marginTop': 20}),
 
         # Slider for P(-L|-Y)
         dcc.Markdown('''#### Slider: P(-L|-Y)'''),
         dcc.Slider(0, 1, 0.01, value=0.5, id="P(-L|-Y)-slider", marks=None,
                    tooltip={"placement": "bottom", "always_visible": True}),
-        html.Div(id='P(-L|-Y)-output', style={'marginTop': 20}),
-
     ], style={'border': '10px solid #ddd', 'padding': '10px', 'marginTop': '20px', "margin-left": "15%",
               "margin-right": "15%"},
 )
 
 
-# Callbacks to update the output for each slider
+# Single callback to use all slider values in one function
 @callback(
-    Output('s-output', 'children'),
-    Input('s-slider', 'value')
+    Output('bar-chart', 'figure'),
+    [
+        Input('s-slider', 'value'),
+        Input('P(L|Y)-slider', 'value'),
+        Input('P(Y)-slider', 'value'),
+        Input('P(-L|-Y)-slider', 'value')
+    ]
 )
+def update_bar_chart(s, P_LY, P_Y, P_notL_notY):
 
-@callback(
-    Output('P(L|Y)-output', 'children'),
-    Input('P(L|Y)-slider', 'value')
-)
+    # Calculate new bar heights based on slider values
+    SF_y[0] = (P_Y**4) * (caluclate_notLY(value=P_Y)**7)
+    SF_y[1] = (P_Y**3) * (calculate_notY(value=P_Y)**6) * s * ((P_LY*P_Y) + (P_notL_notY * calculate_notY(value=P_Y)))
+    SF_y[2] = (P_Y**2) * (calculate_notY(value=P_Y)**5) * s**2 * ((P_LY*P_Y) + (P_notL_notY * calculate_notY(value=P_Y)))**2
+    SF_y[3] = (P_Y) * (calculate_notY(value=P_Y)**4) * s**3 * ((P_LY*P_Y) + (P_notL_notY * calculate_notY(value=P_Y)))**3
+    SF_y[4] = (calculate_notY(value=P_Y)**3) * s**4 * ((P_LY*P_Y) + (P_notL_notY * calculate_notY(value=P_Y)))**4
+    SF_y[5] = P_LY * (calculate_notY(value=P_Y)**2) * s**5 * ((P_LY*P_Y) + (P_notL_notY * calculate_notY(value=P_Y)))**4
+    SF_y[6] = P_LY**2 * (calculate_notY(value=P_Y)**1) * s**6 * ((P_LY*P_Y) + (P_notL_notY * calculate_notY(value=P_Y)))**4
+    SF_y[7] = P_LY**3 * s**7 * ((P_LY*P_Y) + (P_notL_notY * calculate_notY(value=P_Y)))**4
 
+    # Create the bar chart figure
+    fig = go.Figure(data=[
+        go.Bar(x=SF_x, y=SF_y, name='SF'),
+    ])
 
-@callback(
-    Output('P(Y)-output', 'children'),
-    Input('P(Y)-slider', 'value')
-)
+    # Set title and labels
+    fig.update_layout(
+        title="Interactive Stationary Distribution Bar Chart",
+        xaxis_title="States",
+        yaxis_title="Probability",
+    )
 
-@callback(
-    Output('P(-L|-Y)-output', 'children'),
-    Input('P(-L|-Y)-slider', 'value')
-)
-
-def update_s_output(value):
-    return f'Selected value of s: {value}'
-
-def update_P_L_Y_output(value):
-    return f'Selected value of P(L|Y): {value}'
-
-def update_P_Y_output(value):
-    return f'Selected value of P(Y): {value}'
-
-def update_P_notL_notY_output(value):
-    return f'Selected value of P(-L|-Y): {value}'
-
-def calculate_new_bar_height():
-    return
+    return fig  # This updates the bar chart
 
 
 # Run the app
